@@ -4,7 +4,9 @@
 @section('nofooter', true)
 
 @section('content')
-@php($isRealPhotoDemo = $vehicle->slug === 'honda-civic-turbo')
+@php
+    $isRealPhotoDemo = $vehicle->slug === 'honda-civic-turbo';
+@endphp
 <form method="post" action="{{ route('customizer.store', $vehicle) }}" class="customizer" data-customizer data-base="{{ $vehicle->base_price }}">
     @csrf
     <div class="preview-panel">
@@ -20,7 +22,10 @@
 
         <div class="preview-stage {{ $isRealPhotoDemo ? 'preview-stage-real' : '' }}">
             @if($isRealPhotoDemo)
-                <img data-real-vehicle class="real-vehicle-photo" src="{{ asset('images/demo/civic-stock.jpg') }}" alt="Honda Civic Type R dengan modifikasi Mugen">
+                <div class="real-photo-stack" data-real-vehicle>
+                    <img data-real-layer class="real-vehicle-photo is-visible" src="{{ asset('images/demo/civic-stock.jpg') }}" alt="Honda Civic Type R dengan modifikasi Mugen">
+                    <img data-real-layer class="real-vehicle-photo" src="{{ asset('images/demo/civic-stock.jpg') }}" alt="" aria-hidden="true">
+                </div>
             @else
                 <x-vehicle-art :type="$vehicle->type" color="#ff5a1f"/>
             @endif
@@ -58,6 +63,16 @@
                                     '#3267d6' => asset('images/demo/civic-bodykit.jpg'),
                                     default => asset('images/demo/civic-stock.jpg'),
                                 };
+                            } elseif ($isRealPhotoDemo && $item->preview_key === 'wheel') {
+                                $photo = match(strtolower((string) $item->color)) {
+                                    '#17181c' => asset('images/demo/civic-wheel-black.png'),
+                                    '#9b6b32' => asset('images/demo/civic-wheel-bronze.png'),
+                                    default => asset('images/demo/civic-stock.jpg'),
+                                };
+                            } elseif ($isRealPhotoDemo && $item->preview_key === 'bodykit') {
+                                $photo = asset('images/demo/civic-widebody.png');
+                            } elseif ($isRealPhotoDemo && $item->preview_key === 'spoiler') {
+                                $photo = asset('images/demo/civic-stock.jpg');
                             }
                         @endphp
                         <div class="option">

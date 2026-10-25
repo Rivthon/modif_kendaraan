@@ -8,3 +8,9 @@ These images are used only for a local visual prototype and must be replaced or 
   - https://www.mugen-power.com/files/user/carparts/product/news/MUGEN-CIVIC-TYPE-R%28FK8%29_Fr_1500.jpg
 - `civic-bodykit.jpg`: ICB Motorsport Mugen FK8 product image
   - https://site.icbmotorsport.com/ssl/Mugen/Mugen_FK8_CTR_Civic_TypeR_Front_Lip_71110_XNCF_K0S0_BT_Pre_MMC.jpg
+
+Generated test variants based on `civic-stock.jpg`:
+
+- `civic-wheel-black.png`: matte-black forged five-spoke wheels
+- `civic-wheel-bronze.png`: satin-bronze six-spoke racing wheels
+- `civic-widebody.png`: wide-body street kit with splitter, skirts, and ducktail
