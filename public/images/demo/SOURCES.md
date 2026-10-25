@@ -17,3 +17,11 @@ Generated test variants based on `civic-stock.jpg`:
 - `civic-stance-low.png`: street-low suspension stance
 - `civic-carbon-hood.png`: exposed carbon-fiber hood
 - `civic-racing-livery.png`: black stripe and side-graphic livery
+
+Transparent component overlays generated with OpenAI image generation for this prototype:
+
+- `civic-overlay-wheel-black.png`: forged-black wheels only
+- `civic-overlay-wheel-bronze.png`: bronze racing wheels only
+- `civic-overlay-bodykit.png`: Aero Street add-on parts only
+- `civic-overlay-carbon-hood.png`: carbon hood only
+- `civic-overlay-racing-livery.png`: racing vinyl only

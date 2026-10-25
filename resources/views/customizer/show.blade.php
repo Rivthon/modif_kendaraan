@@ -23,8 +23,12 @@
         <div class="preview-stage {{ $isRealPhotoDemo ? 'preview-stage-real' : '' }}">
             @if($isRealPhotoDemo)
                 <div class="real-photo-stack" data-real-vehicle>
-                    <img data-real-layer class="real-vehicle-photo is-visible" src="{{ asset('images/demo/civic-stock.jpg') }}" alt="Honda Civic Type R dengan modifikasi Mugen">
-                    <img data-real-layer class="real-vehicle-photo" src="{{ asset('images/demo/civic-stock.jpg') }}" alt="" aria-hidden="true">
+                    <img data-color-layer class="real-vehicle-photo real-base-photo is-visible" src="{{ asset('images/demo/civic-stock.jpg') }}" alt="Honda Civic Type R dengan modifikasi Mugen">
+                    <img data-color-layer class="real-vehicle-photo real-base-photo" src="{{ asset('images/demo/civic-stock.jpg') }}" alt="" aria-hidden="true">
+                    <img data-mod-layer="livery" class="real-vehicle-photo real-mod-photo mod-livery" alt="" aria-hidden="true">
+                    <img data-mod-layer="body" class="real-vehicle-photo real-mod-photo mod-body" alt="" aria-hidden="true">
+                    <img data-mod-layer="hood" class="real-vehicle-photo real-mod-photo mod-hood" alt="" aria-hidden="true">
+                    <img data-mod-layer="wheel" class="real-vehicle-photo real-mod-photo mod-wheel" alt="" aria-hidden="true">
                 </div>
             @else
                 <x-vehicle-art :type="$vehicle->type" color="#ff5a1f"/>
@@ -58,39 +62,53 @@
                         @php
                             $photo = null;
                             if ($isRealPhotoDemo && $item->preview_key === 'color') {
-                                $photo = match(strtolower((string) $item->color)) {
-                                    '#f3f3ef', '#ffffff', '#f5f5f5' => asset('images/demo/civic-wheels.jpg'),
-                                    '#3267d6' => asset('images/demo/civic-bodykit.jpg'),
-                                    default => asset('images/demo/civic-stock.jpg'),
-                                };
+                                $photo = asset('images/demo/civic-stock.jpg');
                             } elseif ($isRealPhotoDemo && $item->preview_key === 'wheel') {
                                 $photo = match(strtolower((string) $item->color)) {
-                                    '#17181c' => asset('images/demo/civic-wheel-black.png'),
-                                    '#9b6b32' => asset('images/demo/civic-wheel-bronze.png'),
-                                    default => asset('images/demo/civic-stock.jpg'),
+                                    '#17181c' => asset('images/demo/civic-overlay-wheel-black.png'),
+                                    '#9b6b32' => asset('images/demo/civic-overlay-wheel-bronze.png'),
+                                    default => null,
                                 };
                             } elseif ($isRealPhotoDemo && $item->preview_key === 'bodykit') {
-                                $photo = asset('images/demo/civic-widebody.png');
-                            } elseif ($isRealPhotoDemo && $item->preview_key === 'spoiler') {
-                                $photo = asset('images/demo/civic-stock.jpg');
-                            } elseif ($isRealPhotoDemo && $item->preview_key === 'stance') {
-                                $photo = str_contains(strtolower($item->name), 'standard')
-                                    ? asset('images/demo/civic-stock.jpg')
-                                    : asset('images/demo/civic-stance-low.png');
+                                $photo = asset('images/demo/civic-overlay-bodykit.png');
                             } elseif ($isRealPhotoDemo && $item->preview_key === 'hood') {
                                 $photo = str_contains(strtolower($item->name), 'carbon')
-                                    ? asset('images/demo/civic-carbon-hood.png')
-                                    : asset('images/demo/civic-stock.jpg');
+                                    ? asset('images/demo/civic-overlay-carbon-hood.png')
+                                    : null;
                             } elseif ($isRealPhotoDemo && $item->preview_key === 'livery') {
                                 $photo = str_contains(strtolower($item->name), 'clean')
-                                    ? asset('images/demo/civic-stock.jpg')
-                                    : asset('images/demo/civic-racing-livery.png');
+                                    ? null
+                                    : asset('images/demo/civic-overlay-racing-livery.png');
                             }
+
+                            $colorFilter = match (strtolower((string) $item->color)) {
+                                '#3267d6' => 'hue-rotate(220deg) saturate(1.1)',
+                                '#f3f3ef', '#ffffff', '#f5f5f5' => 'grayscale(1) brightness(1.38) contrast(.72)',
+                                default => 'none',
+                            };
+
+                            $visualLayer = match ($item->preview_key) {
+                                'bodykit', 'spoiler' => 'body',
+                                'wheel', 'stance', 'hood', 'livery', 'color' => $item->preview_key,
+                                default => null,
+                            };
+                            $visualActive = match ($item->preview_key) {
+                                'wheel' => ! str_contains(strtolower($item->name), 'silver'),
+                                'bodykit' => true,
+                                'spoiler' => false,
+                                'stance' => ! str_contains(strtolower($item->name), 'standard'),
+                                'hood' => str_contains(strtolower($item->name), 'carbon'),
+                                'livery' => ! str_contains(strtolower($item->name), 'clean'),
+                                'color' => true,
+                                default => false,
+                            };
                         @endphp
                         <div class="option">
                             <input type="radio" name="items[{{ $category->id }}]" id="item-{{ $item->id }}" value="{{ $item->id }}"
                                 data-price="{{ $item->price }}" data-kind="{{ $item->preview_key }}" data-color="{{ $item->color }}"
-                                @if($photo) data-image="{{ $photo }}" @endif @checked($loop->first)>
+                                @if($photo) data-image="{{ $photo }}" @endif @if($visualLayer) data-layer="{{ $visualLayer }}" @endif
+                                @if($item->preview_key === 'color') data-color-filter="{{ $colorFilter }}" @endif
+                                data-visual-active="{{ $visualActive ? '1' : '0' }}" @checked($loop->first)>
                             <label for="item-{{ $item->id }}">
                                 <span class="swatch" @if($item->color) style="background:{{ $item->color }};color:{{ in_array(strtolower($item->color), ['#ffffff','#f5f5f5']) ? '#111' : '#fff' }}" @endif>
                                     {{ !$item->color ? substr($item->name, 0, 1) : '' }}
