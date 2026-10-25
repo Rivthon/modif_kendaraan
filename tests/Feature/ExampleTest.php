@@ -25,6 +25,14 @@ class ExampleTest extends TestCase
             ->assertSee('data-real-vehicle', false)
             ->assertSee('civic-wheel-black.png', false)
             ->assertSee('civic-wheel-bronze.png', false)
-            ->assertSee('civic-widebody.png', false);
+            ->assertSee('civic-widebody.png', false)
+            ->assertSee('civic-stance-low.png', false)
+            ->assertSee('civic-carbon-hood.png', false)
+            ->assertSee('civic-racing-livery.png', false)
+            ->assertSee('Suspensi & Stance')
+            ->assertSee('Kap Mesin')
+            ->assertSee('Decal & Livery')
+            ->assertDontSee('Stage 1 ECU Tune')
+            ->assertDontSee('Performa');
     }
 }

@@ -73,6 +73,18 @@
                                 $photo = asset('images/demo/civic-widebody.png');
                             } elseif ($isRealPhotoDemo && $item->preview_key === 'spoiler') {
                                 $photo = asset('images/demo/civic-stock.jpg');
+                            } elseif ($isRealPhotoDemo && $item->preview_key === 'stance') {
+                                $photo = str_contains(strtolower($item->name), 'standard')
+                                    ? asset('images/demo/civic-stock.jpg')
+                                    : asset('images/demo/civic-stance-low.png');
+                            } elseif ($isRealPhotoDemo && $item->preview_key === 'hood') {
+                                $photo = str_contains(strtolower($item->name), 'carbon')
+                                    ? asset('images/demo/civic-carbon-hood.png')
+                                    : asset('images/demo/civic-stock.jpg');
+                            } elseif ($isRealPhotoDemo && $item->preview_key === 'livery') {
+                                $photo = str_contains(strtolower($item->name), 'clean')
+                                    ? asset('images/demo/civic-stock.jpg')
+                                    : asset('images/demo/civic-racing-livery.png');
                             }
                         @endphp
                         <div class="option">

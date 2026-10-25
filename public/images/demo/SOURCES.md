@@ -14,3 +14,6 @@ Generated test variants based on `civic-stock.jpg`:
 - `civic-wheel-black.png`: matte-black forged five-spoke wheels
 - `civic-wheel-bronze.png`: satin-bronze six-spoke racing wheels
 - `civic-widebody.png`: wide-body street kit with splitter, skirts, and ducktail
+- `civic-stance-low.png`: street-low suspension stance
+- `civic-carbon-hood.png`: exposed carbon-fiber hood
+- `civic-racing-livery.png`: black stripe and side-graphic livery
