@@ -1,3 +1,5 @@
+import { initVehicle3D } from './vehicle-3d';
+
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.querySelector('[data-customizer]');
   if (!form) return;
@@ -7,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const realStack = document.querySelector('[data-real-vehicle]');
   const colorLayers = [...document.querySelectorAll('[data-color-layer]')];
   const modificationLayers = [...document.querySelectorAll('[data-mod-layer]')];
+  const vehicle3D = initVehicle3D(document.querySelector('[data-3d-vehicle]'));
   let activeColorLayer = 0, photoRequest = 0;
   const rupiah = value => new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(value);
   form.querySelectorAll('.category').forEach((category, index) => {
@@ -29,31 +32,33 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     preload.src = src;
   };
-  const updateRealComposition = chosen => {
+  const updateRealComposition = (chosen, changedInput = null) => {
     const color = chosen.find(input => input.dataset.layer === 'color');
-    swapRealPhoto(color?.dataset.image);
+    swapRealPhoto(changedInput?.dataset.image || color?.dataset.image);
     colorLayers.forEach(layer => { layer.style.filter = color?.dataset.colorFilter || 'none'; });
 
     modificationLayers.forEach(layer => {
       const choice = chosen.find(input => input.dataset.layer === layer.dataset.modLayer);
-      const isActive = choice?.dataset.visualActive === '1' && choice.dataset.image;
+      const isActive = choice?.dataset.visualActive === '1';
 
-      if (isActive && layer.src !== choice.dataset.image) layer.src = choice.dataset.image;
+      if (isActive && choice.dataset.image && layer instanceof HTMLImageElement && layer.src !== choice.dataset.image) layer.src = choice.dataset.image;
+      if (layer.dataset.modLayer === 'wheel') layer.style.backgroundColor = choice?.dataset.color || 'transparent';
       layer.classList.toggle('is-visible', Boolean(isActive));
     });
 
     const stance = chosen.find(input => input.dataset.layer === 'stance');
     realStack?.classList.toggle('is-lowered', stance?.dataset.visualActive === '1');
   };
-  const update = () => {
+  const update = changedInput => {
     let sum = base, chosen = [];
     form.querySelectorAll('input[name^="items["]:checked').forEach(input => { sum += Number(input.dataset.price || 0); chosen.push(input); });
     total.textContent = rupiah(sum);
     const color = chosen.find(i => i.dataset.kind === 'color'); if (body && color) body.style.fill = color.dataset.color;
-    updateRealComposition(chosen);
+    updateRealComposition(chosen, changedInput);
+    vehicle3D?.update(chosen);
     const wheel = chosen.find(i => i.dataset.kind === 'wheel'); wheels.forEach(el => { if (wheel) el.style.fill = wheel.dataset.color || '#202126'; });
     if (spoiler) spoiler.style.opacity = chosen.some(i => i.dataset.kind === 'spoiler') ? '1' : '0';
     if (accent) accent.style.opacity = chosen.some(i => i.dataset.kind === 'bodykit') ? '1' : '0';
   };
-  form.addEventListener('change', update); update();
+  form.addEventListener('change', event => update(event.target)); update();
 });

@@ -13,7 +13,7 @@
         <div class="preview-top">
             <div>
                 <span class="badge badge-{{ $vehicle->type }}">{{ $vehicle->type }}</span>
-                @if($isRealPhotoDemo)<span class="badge badge-real">● Foto real beta</span>@endif
+                @if($isRealPhotoDemo)<span class="badge badge-real">● Studio 3D</span>@endif
                 <h2 style="font-family:Syne;margin:10px 0 0">{{ $vehicle->brand }} {{ $vehicle->name }}</h2>
                 <span class="muted">{{ $vehicle->year }}</span>
             </div>
@@ -22,21 +22,15 @@
 
         <div class="preview-stage {{ $isRealPhotoDemo ? 'preview-stage-real' : '' }}">
             @if($isRealPhotoDemo)
-                <div class="real-photo-stack" data-real-vehicle>
-                    <img data-color-layer class="real-vehicle-photo real-base-photo is-visible" src="{{ asset('images/demo/civic-stock.jpg') }}" alt="Honda Civic Type R dengan modifikasi Mugen">
-                    <img data-color-layer class="real-vehicle-photo real-base-photo" src="{{ asset('images/demo/civic-stock.jpg') }}" alt="" aria-hidden="true">
-                    <img data-mod-layer="livery" class="real-vehicle-photo real-mod-photo mod-livery" alt="" aria-hidden="true">
-                    <img data-mod-layer="body" class="real-vehicle-photo real-mod-photo mod-body" alt="" aria-hidden="true">
-                    <img data-mod-layer="hood" class="real-vehicle-photo real-mod-photo mod-hood" alt="" aria-hidden="true">
-                    <img data-mod-layer="wheel" class="real-vehicle-photo real-mod-photo mod-wheel" alt="" aria-hidden="true">
-                </div>
+                <div class="vehicle-3d-stage" data-3d-vehicle aria-label="Preview kendaraan 3D interaktif"></div>
+                <span class="orbit-hint">Geser untuk memutar · Scroll untuk zoom</span>
             @else
                 <x-vehicle-art :type="$vehicle->type" color="#ff5a1f"/>
             @endif
         </div>
         <div class="preview-note">
             @if($isRealPhotoDemo)
-                Mode uji foto nyata. Gambar referensi digunakan sementara dan belum untuk penggunaan komersial.
+                Preview 3D interaktif. Semua modifikasi aktif dapat digabungkan.
             @else
                 Preview visual bersifat ilustrasi. Warna dan bentuk aktual dapat berbeda.
             @endif
@@ -62,28 +56,39 @@
                         @php
                             $photo = null;
                             if ($isRealPhotoDemo && $item->preview_key === 'color') {
-                                $photo = asset('images/demo/civic-stock.jpg');
+                                $photo = match(strtolower((string) $item->color)) {
+                                    '#f3f3ef', '#ffffff', '#f5f5f5' => asset('images/demo/civic-wheels.jpg'),
+                                    '#3267d6' => asset('images/demo/civic-bodykit.jpg'),
+                                    default => asset('images/demo/civic-stock.jpg'),
+                                };
                             } elseif ($isRealPhotoDemo && $item->preview_key === 'wheel') {
                                 $photo = match(strtolower((string) $item->color)) {
-                                    '#17181c' => asset('images/demo/civic-overlay-wheel-black.png'),
-                                    '#9b6b32' => asset('images/demo/civic-overlay-wheel-bronze.png'),
-                                    default => null,
+                                    '#17181c' => asset('images/demo/civic-wheel-black.png'),
+                                    '#9b6b32' => asset('images/demo/civic-wheel-bronze.png'),
+                                    default => asset('images/demo/civic-stock.jpg'),
                                 };
                             } elseif ($isRealPhotoDemo && $item->preview_key === 'bodykit') {
-                                $photo = asset('images/demo/civic-overlay-bodykit.png');
+                                $photo = asset('images/demo/civic-widebody.png');
+                            } elseif ($isRealPhotoDemo && $item->preview_key === 'spoiler') {
+                                $photo = asset('images/demo/civic-stock.jpg');
+                            } elseif ($isRealPhotoDemo && $item->preview_key === 'stance') {
+                                $photo = str_contains(strtolower($item->name), 'standard')
+                                    ? asset('images/demo/civic-stock.jpg')
+                                    : asset('images/demo/civic-stance-low.png');
                             } elseif ($isRealPhotoDemo && $item->preview_key === 'hood') {
                                 $photo = str_contains(strtolower($item->name), 'carbon')
-                                    ? asset('images/demo/civic-overlay-carbon-hood.png')
-                                    : null;
+                                    ? asset('images/demo/civic-carbon-hood.png')
+                                    : asset('images/demo/civic-stock.jpg');
                             } elseif ($isRealPhotoDemo && $item->preview_key === 'livery') {
                                 $photo = str_contains(strtolower($item->name), 'clean')
-                                    ? null
-                                    : asset('images/demo/civic-overlay-racing-livery.png');
+                                    ? asset('images/demo/civic-stock.jpg')
+                                    : asset('images/demo/civic-racing-livery.png');
                             }
 
-                            $colorFilter = match (strtolower((string) $item->color)) {
-                                '#3267d6' => 'hue-rotate(220deg) saturate(1.1)',
-                                '#f3f3ef', '#ffffff', '#f5f5f5' => 'grayscale(1) brightness(1.38) contrast(.72)',
+                            $colorFilter = 'none';
+                            $componentFilter = match (strtolower((string) $item->color)) {
+                                '#17181c' => 'grayscale(1) brightness(.46) contrast(1.45)',
+                                '#9b6b32' => 'sepia(1) saturate(1.9) hue-rotate(350deg) brightness(.78)',
                                 default => 'none',
                             };
 
@@ -108,6 +113,7 @@
                                 data-price="{{ $item->price }}" data-kind="{{ $item->preview_key }}" data-color="{{ $item->color }}"
                                 @if($photo) data-image="{{ $photo }}" @endif @if($visualLayer) data-layer="{{ $visualLayer }}" @endif
                                 @if($item->preview_key === 'color') data-color-filter="{{ $colorFilter }}" @endif
+                                @if($item->preview_key === 'wheel') data-component-filter="{{ $componentFilter }}" @endif
                                 data-visual-active="{{ $visualActive ? '1' : '0' }}" @checked($loop->first)>
                             <label for="item-{{ $item->id }}">
                                 <span class="swatch" @if($item->color) style="background:{{ $item->color }};color:{{ in_array(strtolower($item->color), ['#ffffff','#f5f5f5']) ? '#111' : '#fff' }}" @endif>

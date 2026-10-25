@@ -17,22 +17,18 @@ class ExampleTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_real_photo_customizer_renders_all_visual_variants(): void
+    public function test_three_dimensional_customizer_renders_all_visual_controls(): void
     {
         $response = $this->get('/custom/honda-civic-turbo');
 
         $response->assertOk()
-            ->assertSee('data-real-vehicle', false)
-            ->assertSee('data-color-layer', false)
-            ->assertSee('data-mod-layer="wheel"', false)
-            ->assertSee('data-mod-layer="body"', false)
-            ->assertSee('data-mod-layer="hood"', false)
-            ->assertSee('data-mod-layer="livery"', false)
-            ->assertSee('civic-overlay-wheel-black.png', false)
-            ->assertSee('civic-overlay-wheel-bronze.png', false)
-            ->assertSee('civic-overlay-bodykit.png', false)
-            ->assertSee('civic-overlay-carbon-hood.png', false)
-            ->assertSee('civic-overlay-racing-livery.png', false)
+            ->assertSee('data-3d-vehicle', false)
+            ->assertSee('Studio 3D')
+            ->assertSee('civic-wheel-black.png', false)
+            ->assertSee('civic-wheel-bronze.png', false)
+            ->assertSee('civic-widebody.png', false)
+            ->assertSee('civic-carbon-hood.png', false)
+            ->assertSee('civic-racing-livery.png', false)
             ->assertSee('Suspensi & Stance')
             ->assertSee('Kap Mesin')
             ->assertSee('Decal & Livery')
