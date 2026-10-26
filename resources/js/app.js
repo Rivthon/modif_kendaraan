@@ -1,5 +1,3 @@
-import { initVehicle3D } from './vehicle-3d';
-
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.querySelector('[data-customizer]');
   if (!form) return;
@@ -9,7 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const realStack = document.querySelector('[data-real-vehicle]');
   const colorLayers = [...document.querySelectorAll('[data-color-layer]')];
   const modificationLayers = [...document.querySelectorAll('[data-mod-layer]')];
-  const vehicle3D = initVehicle3D(document.querySelector('[data-3d-vehicle]'));
   let activeColorLayer = 0, photoRequest = 0;
   const rupiah = value => new Intl.NumberFormat('id-ID',{style:'currency',currency:'IDR',maximumFractionDigits:0}).format(value);
   form.querySelectorAll('.category').forEach((category, index) => {
@@ -55,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     total.textContent = rupiah(sum);
     const color = chosen.find(i => i.dataset.kind === 'color'); if (body && color) body.style.fill = color.dataset.color;
     updateRealComposition(chosen, changedInput);
-    vehicle3D?.update(chosen);
     const wheel = chosen.find(i => i.dataset.kind === 'wheel'); wheels.forEach(el => { if (wheel) el.style.fill = wheel.dataset.color || '#202126'; });
     if (spoiler) spoiler.style.opacity = chosen.some(i => i.dataset.kind === 'spoiler') ? '1' : '0';
     if (accent) accent.style.opacity = chosen.some(i => i.dataset.kind === 'bodykit') ? '1' : '0';

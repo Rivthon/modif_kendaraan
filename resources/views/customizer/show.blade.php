@@ -13,7 +13,7 @@
         <div class="preview-top">
             <div>
                 <span class="badge badge-{{ $vehicle->type }}">{{ $vehicle->type }}</span>
-                @if($isRealPhotoDemo)<span class="badge badge-real">● Studio 3D</span>@endif
+                @if($isRealPhotoDemo)<span class="badge badge-real">● Foto real beta</span>@endif
                 <h2 style="font-family:Syne;margin:10px 0 0">{{ $vehicle->brand }} {{ $vehicle->name }}</h2>
                 <span class="muted">{{ $vehicle->year }}</span>
             </div>
@@ -22,15 +22,17 @@
 
         <div class="preview-stage {{ $isRealPhotoDemo ? 'preview-stage-real' : '' }}">
             @if($isRealPhotoDemo)
-                <div class="vehicle-3d-stage" data-3d-vehicle aria-label="Preview kendaraan 3D interaktif"></div>
-                <span class="orbit-hint">Geser untuk memutar · Scroll untuk zoom</span>
+                <div class="real-photo-stack" data-real-vehicle>
+                    <img data-color-layer class="real-vehicle-photo real-base-photo is-visible" src="{{ asset('images/demo/civic-stock.jpg') }}" alt="Honda Civic Type R dengan modifikasi Mugen">
+                    <img data-color-layer class="real-vehicle-photo real-base-photo" src="{{ asset('images/demo/civic-stock.jpg') }}" alt="" aria-hidden="true">
+                </div>
             @else
                 <x-vehicle-art :type="$vehicle->type" color="#ff5a1f"/>
             @endif
         </div>
         <div class="preview-note">
             @if($isRealPhotoDemo)
-                Preview 3D interaktif. Semua modifikasi aktif dapat digabungkan.
+                Mode foto nyata ringan. Pilihan terakhir ditampilkan dengan perpindahan halus.
             @else
                 Preview visual bersifat ilustrasi. Warna dan bentuk aktual dapat berbeda.
             @endif
